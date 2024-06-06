@@ -1,0 +1,127 @@
+<?php
+
+session_start();
+
+$user = $_SESSION["u"];
+
+require "connection.php";
+
+$array;
+
+$search = $_POST["s"];
+$age = $_POST["a"];
+$qty = $_POST["q"];
+$condition = $_POST["c"];
+
+// echo$search;
+// echo$age;
+// echo$qty;
+// echo$condition;
+if (!empty($search) && $age != 0) {
+
+    if ($age == 1) {
+
+        $prs = Database::search("SELECT * FROM `product` WHERE `user_email`='" . $user["email"] . "' AND  `tittle`
+LIKE '%" . $search . "%'  ORDER BY `datetime_added` DESC ");
+
+        $ans = $prs->num_rows;
+
+        for ($i = 0; $i < $ans; $i++) {
+            $array[$i] = $prs->fetch_assoc();
+        }
+
+        echo json_encode($array);
+    }elseif($age == 2){
+
+        $prs = Database::search("SELECT * FROM `product` WHERE `user_email`='" . $user["email"] . "' AND  `tittle`
+LIKE '%" . $search . "%'  ORDER BY `datetime_added` ASC ");
+
+        $ans = $prs->num_rows;
+
+        for ($i = 0; $i < $ans; $i++) {
+            $array[$i] = $prs->fetch_assoc();
+        }
+
+        echo json_encode($array);
+
+    }
+        
+    
+
+}else if (!empty($search)) {
+
+    $products = Database::search("SELECT * FROM `product` WHERE `user_email`='" . $user["email"] . "' AND  `tittle`
+     LIKE '%" . $search . "%'  ");
+
+    $pn = $products->num_rows;
+
+    for ($x = 0; $x < $pn; $x++) {
+
+        $array[$x] = $products->fetch_assoc();
+
+
+        $productimage = Database::search("SELECT * FROM `images` WHERE `product_id`='" . $product_id . "'  ");
+
+        if ($productimage->num_rows == 1) {
+
+            $img = $productimage->fetch_assoc();
+
+            $array['img'] = $img["code"];
+        }
+    }
+
+    echo json_encode($array);
+} elseif ($age != 0) {
+
+    if ($age == 1) {
+
+        $page = Database::search("SELECT * FROM `product` WHERE `user_email`='" . $user["email"] . "'
+            ORDER BY  `datetime_added` DESC ");
+        $an = $page->num_rows;
+
+        for ($i = 0; $i < $an; $i++) {
+            $array[$i] = $page->fetch_assoc();
+        }
+
+        echo json_encode($array);
+    } elseif ($age == 2) {
+
+        $page = Database::search("SELECT * FROM `product` WHERE `user_email`='" . $user["email"] . "'
+        ORDER BY  `datetime_added`ASC ");
+        $an = $page->num_rows;
+
+        for ($i = 0; $i < $an; $i++) {
+            $array[$i] = $page->fetch_assoc();
+        }
+        echo json_encode($array);
+    }
+} elseif ($qty != 0) {
+
+    if ($qty == 1) {
+
+        $qtyrs = Database::search("SELECT * FROM `product` WHERE `user_email`='" . $user["email"] . "'
+            ORDER BY  `qty` ASC ");
+        $an = $qtyrs->num_rows;
+
+        for ($i = 0; $i < $an; $i++) {
+            $array[$i] = $qtyrs->fetch_assoc();
+        }
+
+        echo json_encode($array);
+    } elseif ($qty == 2) {
+
+        $qtyrs = Database::search("SELECT * FROM `product` WHERE `user_email`='" . $user["email"] . "'
+        ORDER BY  `qty`  DESC ");
+        $an = $qtyrs->num_rows;
+
+        for ($i = 0; $i < $an; $i++) {
+            $array[$i] = $qtyrs->fetch_assoc();
+        }
+        echo json_encode($array);
+    } else{
+
+    }
+    
+
+
+}
